@@ -23,10 +23,26 @@ public class TCPClient {
      * @return True on success, false otherwise
      */
     public boolean connect(String host, int port) {
-        // TODO Step 1: implement this method
-        // Hint: Remember to process all exceptions and return false on error
-        // Hint: Remember to set up all the necessary input/output stream variables
-        return false;
+
+        // Step 1: implement this method
+
+        boolean connectionStatus = false;
+        try {
+            connection = new Socket(host,port);
+            InputStream inputStream = connection.getInputStream();
+            OutputStream outputStream = connection.getOutputStream();
+            toServer = new PrintWriter(outputStream,true);
+            fromServer = new BufferedReader(new InputStreamReader(inputStream));
+            connectionStatus = true;
+        } catch (UnknownHostException uhe) {
+            lastError = "The host name is unknown";
+        } catch (ConnectException ce) {
+            lastError = "No chat server found";
+        } catch (IOException e) {
+            lastError = "IO error";
+        }
+        return connectionStatus;
+
     }
 
     /**
@@ -40,6 +56,11 @@ public class TCPClient {
      */
     public synchronized void disconnect() {
         // TODO Step 4: implement this method
+        try {
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // Hint: remember to check if connection is active
     }
 
